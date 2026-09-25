@@ -1,0 +1,467 @@
+{
+  "info": {
+    "_postman_id": "57f247d8-fcd7-4721-9c1c-66911132c997",
+    "name": "API Assessment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24295940"
+  },
+  "item": [
+    {
+      "name": "Get Access Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Staus Code is 200\", function () {\r",
+              "    pm.expect(pm.response.code).to.equal(200);\r",
+              "    });\r",
+              "\r",
+              "pm.test(\"Token Type is Bearer\", function () {\r",
+              "    pm.expect(jsonData.tokenType).to.equal(\"Bearer\");\r",
+              "    });\r",
+              "pm.test(\"Access Token is a String\", function () {\r",
+              "    pm.expect(jsonData.accessToken).to.be.a('string');\r",
+              "    });\r",
+              "\r",
+              "pm.environment.set(\"token\", jsonData.accessToken);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{username}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/token",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Status Code is 200\", function () {\r",
+              "    pm.expect(pm.response.code).to.equal(200);\r",
+              "    });\r",
+              "pm.test(\"Response is an Array\", function () {\r",
+              "    pm.expect(Array.isArray(jsonData)).to.be.true;\r",
+              "    });\r",
+              "pm.test(\"Response has at least one item\", function () {\r",
+              "    pm.expect(jsonData.length).to.be.above(0);\r",
+              "    });\r",
+              "pm.test(\"Fields exist\", function () {\r",
+              "    pm.expect(jsonData[0].id).to.exist;\r",
+              "    pm.expect(jsonData[0].name).to.exist;\r",
+              "    pm.expect(jsonData[0].email).to.exist;\r",
+              "    });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Users ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Status Code is 200\", function () {\r",
+              "    pm.expect(pm.response.code).to.equal(200);\r",
+              "    });\r",
+              "pm.test(\"Response is an Array\", function () {\r",
+              "    pm.expect(Array.isArray(jsonData)).to.be.true;\r",
+              "    });\r",
+              "pm.test(\"Response has at least one item\", function () {\r",
+              "    pm.expect(jsonData.length).to.be.above(0);\r",
+              "    });\r",
+              "pm.test(\"Fields exist\", function () {\r",
+              "    pm.expect(jsonData[0].id).to.exist;\r",
+              "    pm.expect(jsonData[0].name).to.exist;\r",
+              "    pm.expect(jsonData[0].email).to.exist;\r",
+              "    });\r",
+              "pm.test(\"User id matches requested userid\", function () {\r",
+              "    pm.expect(jsonData[0].id).to.equal(pm.variables.get(\"userId\"));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var rawText = pm.response.text();",
+              "",
+              "pm.test(\"Status Code is 201\", function () {",
+              "    pm.expect(pm.response.code).to.equal(201);",
+              "});",
+              "",
+              "pm.test(\"Response contains receivedData field\", function () {",
+              "    pm.expect(rawText.includes(\"receivedData\")).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"receivedData contains the name that was sent\", function () {",
+              "    pm.expect(rawText.includes(\"Jane Smith\")).to.be.true;",
+              "});",
+              "",
+              "pm.test(\"receivedData contains the email that was sent\", function () {",
+              "    pm.expect(rawText.includes(\"jane@example.com\")).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Jane Smith\",\r\n    \"email\": \"jane@example.com\",\r\n    \"nickName\": \"Jane\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var rawText = pm.response.text();",
+              "",
+              "pm.test(\"Status Code is 201\", function () {",
+              "        pm.expect(pm.response.code).to.equal(201);",
+              "    });",
+              "pm.test(\"Response contains receivedData field\", function () {",
+              "        pm.expect(rawText.includes(\"receivedData\")).to.be.true;",
+              "    });",
+              "pm.test(\"receivedData contains the updated name that was sent\", function () {",
+              "        pm.expect(rawText.includes(\"JaneU\")).to.be.true;",
+              "    });",
+              "pm.test(\"receivedData contains the email that was sent\", function () {",
+              "        pm.expect(rawText.includes(\"jane@example.com\")).to.be.true;",
+              "    });"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Jane Smith Updated\",\r\n    \"email\": \"jane@example.com\",\r\n    \"nickName\": \"JaneU\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put User Negative Testing",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 for missing required fields\", function () {",
+              "        pm.expect(pm.response.code).to.equal(400);",
+              "    });"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"nickName\": \"NoName\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test(\"Status Code is 200\", function () {",
+              "        pm.expect(pm.response.code).to.equal(200);",
+              "    });",
+              "pm.test(\"Response contains message\", function () {",
+              "        pm.expect(jsonData.message).to.exist;",
+              "    });",
+              "pm.test(\"Correct used ID was deleted\", function () {",
+              "        pm.expect(jsonData.id).to.equal(\"1\");",
+              "    });",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
